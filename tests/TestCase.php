@@ -2,6 +2,8 @@
 
 namespace JWTAuth\Tests;
 
+use Illuminate\Support\Facades\File;
+use JWTAuth\Tests\Fixtures\Models\User;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -11,8 +13,11 @@ class TestCase extends Orchestra
         parent::setUp();
 
         if (!class_exists('CreateJwtTokensStoreTables')) {
-            array_map('unlink', glob(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/database/migrations/*_create_jwt_tokens_store_tables.php'));
+            array_map('unlink', glob(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/database/migrations/*.php'));
             $this->artisan('vendor:publish', [ '--tag' => 'migrations', '--force' => true ]);
+            array_map(function ($f) {
+                File::copy($f, __DIR__ . '/../vendor/orchestra/testbench-core/laravel/database/migrations/' . basename($f));
+            }, glob(__DIR__ . '/Fixtures/migrations/*.php'));
         }
 
 
@@ -28,14 +33,6 @@ class TestCase extends Orchestra
 
     public function defineEnvironment($app)
     {
-        $app['config']->set('auth.guards.test_api', [
-            'driver'      => 'jwt',
-            'provider'    => 'advertisers',
-            'public_key'  => 'jwt-keys/jwtRS256.key.pub',
-            'private_key' => 'jwt-keys/jwtRS256.key',
-            'blocklist'   => 'filesystem',
-            'options'     => [],
-        ]);
     }
 
     /**
@@ -54,5 +51,15 @@ class TestCase extends Orchestra
             'database' => ':memory:',
             'prefix'   => '',
         ]);
+
+        $app['config']->set('auth.guards.test_api', [
+            'driver'      => 'jwt',
+            'provider'    => 'users',
+            'public_key'  => 'jwt-keys/jwtRS256.key.pub',
+            'private_key' => 'jwt-keys/jwtRS256.key',
+            'blocklist'   => 'filesystem',
+            'options'     => [],
+        ]);
+        $app['config']->set('auth.providers.users.model', User::class);
     }
 }

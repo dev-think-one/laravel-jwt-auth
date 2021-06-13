@@ -15,7 +15,6 @@ use JWTAuth\Exceptions\JWTAuthException;
 /**
  * Class JwtGuard
  * @package JWTAuth
-
  *
  * @property EloquentUserProvider $provider
  */
@@ -103,11 +102,9 @@ class JWTGuard implements Guard
 
     public function validate(array $credentials = [])
     {
-        if (empty($credentials[$this->inputKey])) {
+        if (empty($credentials)) {
             return false;
         }
-
-        $credentials = [$this->provider->createModel()->getJwtAuthIdentifierKey() => $credentials[$this->inputKey]];
 
         if ($this->provider->retrieveByCredentials($credentials)) {
             return true;
@@ -182,11 +179,35 @@ class JWTGuard implements Guard
         /** @var WithJwtToken $user */
         $user = $this->user();
 
-        $this->blockList->add($user->currentJwtToken());
+        if ($user && $user->currentJwtToken()) {
+            $this->blockList->add($user->currentJwtToken());
+        }
 
         // Once we have fired the logout event we will clear the users out of memory
         // so they are no longer available as the user is no longer considered as
         // being signed into this application and should not be available here.
+        $this->unsetUser();
+    }
+
+    /**
+     * Remove user form guard cache.
+     *
+     * @return $this
+     */
+    public function unsetUser(): JWTGuard
+    {
         $this->user = null;
+
+        return $this;
+    }
+
+    /**
+     * JWT Token Manager.
+     *
+     * @return JWTManager
+     */
+    public function getJWTManager(): JWTManager
+    {
+        return $this->jwt;
     }
 }
