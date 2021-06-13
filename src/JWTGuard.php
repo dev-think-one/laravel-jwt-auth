@@ -35,7 +35,7 @@ class JWTGuard implements Guard
      *
      * @var JwtBlockListContract
      */
-    protected JwtBlockListContract $blackList;
+    protected JwtBlockListContract $blockList;
 
     /**
      * The name of the query string item from the request containing the API token.
@@ -44,10 +44,10 @@ class JWTGuard implements Guard
      */
     protected string $inputKey;
 
-    public function __construct(UserProvider $provider, JWTManager $jwt, JwtBlockListContract $blackList, array $options = [])
+    public function __construct(UserProvider $provider, JWTManager $jwt, JwtBlockListContract $blockList, array $options = [])
     {
         $this->jwt       = $jwt;
-        $this->blackList = $blackList;
+        $this->blockList = $blockList;
         $this->provider  = $provider;
         $this->inputKey  = $options['input_key'] ?? 'api_token';
     }
@@ -57,7 +57,7 @@ class JWTGuard implements Guard
      */
     public function blockList(): JwtBlockListContract
     {
-        return $this->blackList;
+        return $this->blockList;
     }
 
 
@@ -81,7 +81,7 @@ class JWTGuard implements Guard
             try {
                 $jwtToken = $this->jwt->decode($token);
                 if (
-                    !$this->blackList->isBlockListed($jwtToken) &&
+                    !$this->blockList->isBlockListed($jwtToken) &&
                     $jwtToken->payload()->isValid() &&
                     $identifier = $jwtToken->payload()->get($this->provider->createModel()->getJwtPayloadIdentifierKey(), false)
                 ) {
@@ -182,7 +182,7 @@ class JWTGuard implements Guard
         /** @var WithJwtToken $user */
         $user = $this->user();
 
-        $this->blackList->add($user->currentJwtToken());
+        $this->blockList->add($user->currentJwtToken());
 
         // Once we have fired the logout event we will clear the users out of memory
         // so they are no longer available as the user is no longer considered as
