@@ -24,7 +24,7 @@ You can publish migrations:
 php artisan vendor:publish --provider="JWTAuth\ServiceProvider" --tag="migrations"
 ```
 
-If you do not have encrypt/decrypt keys than generate it with command
+If you don't have encryption / decryption keys, generate them using the command
 
 ```shell
 php artisan jwt:keys:generate
