@@ -4,7 +4,9 @@
 namespace JWTAuth\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use JWTAuth\Contracts\HasObsoleteRecords;
+use JWTAuth\JWTGuard;
 
 /**
  * Class PruneBlockListCommand
@@ -18,7 +20,7 @@ class PruneBlockListCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'jwt:block-list:prune {blockList : block list class}';
+    protected $signature = 'jwt:block-list:prune {guard : Auth guard}';
 
     /**
      * The console command description.
@@ -31,12 +33,12 @@ class PruneBlockListCommand extends Command
      * Execute the console command.
      *
      * @return int
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function handle(): int
     {
-        $class     = $this->argument('blockList');
-        $blockList = app()->make($class);
+        /** @var JWTGuard $guard */
+        $guard     = Auth::guard($this->argument('guard'));
+        $blockList = $guard->blockList();
 
         if ($blockList instanceof HasObsoleteRecords) {
             if ($blockList->removeObsoleteRecords()) {
@@ -45,7 +47,7 @@ class PruneBlockListCommand extends Command
                 return 0;
             }
 
-            $this->warn('Prune error');
+            $this->error('Prune error');
 
             return 1;
         }

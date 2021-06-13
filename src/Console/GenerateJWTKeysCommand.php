@@ -48,7 +48,13 @@ class GenerateJWTKeysCommand extends Command
         $privateKeyPath = storage_path("{$directory}/{$keyName}.key");
         $publicKeyPath  = storage_path("{$directory}/{$keyName}.key.pub");
 
-        if (File::exists($privateKeyPath) && File::exists($publicKeyPath)) {
+        if (File::exists($privateKeyPath) || File::exists($publicKeyPath)) {
+            if (File::exists($privateKeyPath)) {
+                $this->warn("File exists: {$privateKeyPath}");
+            }
+            if (File::exists($publicKeyPath)) {
+                $this->warn("File exists: {$publicKeyPath}");
+            }
             if (!$this->confirm('Keys already exists. Do you wish to continue?')) {
                 return 1;
             }
@@ -103,7 +109,7 @@ class GenerateJWTKeysCommand extends Command
             $this->error($process->getErrorOutput());
             $this->error('Public key not converted.');
 
-            return 2;
+            return 3;
         }
 
         return 0;

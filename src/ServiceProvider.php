@@ -21,6 +21,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 __DIR__ . '/../config/jwt-auth.php' => config_path('jwt-auth.php'),
             ], 'config');
 
+            if (!class_exists('CreateJwtTokensTables')) {
+                $this->publishes([
+                    __DIR__ . '/../database/migrations/create_jwt_tokens_store_tables.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_jwt_tokens_store_tables.php'),
+                ], 'migrations');
+            }
+
 
             $this->commands([
                 \JWTAuth\Console\PruneTokensStorageCommand::class,

@@ -1,7 +1,8 @@
 # Another laravel jwt auth
 
 Another laravel jwt auth package. \
-This package has very slow support, you might be better off switching to an older and more used package: [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth)
+This package has very slow support, you might be better off switching to an older and more used
+package: [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth)
 
 ## Installation
 
@@ -15,6 +16,12 @@ You can publish the config file with:
 
 ```bash
 php artisan vendor:publish --provider="JWTAuth\ServiceProvider" --tag="config"
+```
+
+You can publish migrations:
+
+```bash
+php artisan vendor:publish --provider="JWTAuth\ServiceProvider" --tag="migrations"
 ```
 
 If you do not have encrypt/decrypt keys than generate it with command
