@@ -25,7 +25,11 @@ class GenerateJWTKeysCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'jwt:keys:generate';
+    protected $signature = 'jwt:keys:generate
+    {--key-dir=jwt-keys : Key directory}
+    {--key-name=jwtRS256 : Key name}
+    {--force : Force precess}
+    ';
 
     /**
      * The console command description.
@@ -41,8 +45,13 @@ class GenerateJWTKeysCommand extends Command
      */
     public function handle(): int
     {
-        $directory = $this->ask('Directory name where will be stored keys:', 'jwt-keys');
-        $keyName   = $this->ask('Key name:', 'jwtRS256');
+        $directory = $this->option('key-dir');
+        $keyName   = $this->option('key-name');
+
+        if (!$this->option('force')) {
+            $directory = $this->ask('Directory name where will be stored keys:', $directory);
+            $keyName   = $this->ask('Key name:', $keyName);
+        }
 
         $dirFullPath    = storage_path($directory);
         $privateKeyPath = storage_path("{$directory}/{$keyName}.key");
@@ -55,7 +64,7 @@ class GenerateJWTKeysCommand extends Command
             if (File::exists($publicKeyPath)) {
                 $this->warn("File exists: {$publicKeyPath}");
             }
-            if (!$this->confirm('Keys already exists. Do you wish to continue?')) {
+            if (!$this->option('force') && !$this->confirm('Keys already exists. Do you wish to continue?')) {
                 return 1;
             }
             File::delete($privateKeyPath);
