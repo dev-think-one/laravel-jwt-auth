@@ -3,6 +3,7 @@
 
 namespace JWTAuth\Console;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use JWTAuth\Eloquent\StoredJwtToken;
 
@@ -30,7 +31,7 @@ class PruneTokensStorageCommand extends Command
     public function handle(): int
     {
         $deleted = StoredJwtToken::query()
-            ->where('created_at', '<', now()->subDays($this->option('days')))
+            ->where('created_at', '<', Carbon::now()->subDays($this->option('days')))
             ->delete();
         if ($deleted) {
             $this->info('Stored tokens pruned.');
