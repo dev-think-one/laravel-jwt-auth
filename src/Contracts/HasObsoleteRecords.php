@@ -1,6 +1,5 @@
 <?php
 
-
 namespace JWTAuth\Contracts;
 
 interface HasObsoleteRecords

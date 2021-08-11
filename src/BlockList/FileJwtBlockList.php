@@ -56,7 +56,7 @@ class FileJwtBlockList implements JwtBlockListContract, HasObsoleteRecords
     /**
      * @inheritDoc
      */
-    public function add(JWTManager $token): JwtBlockListContract
+    public function add(JWTManager $token): static
     {
         $this->maybeRemoveObsoleteRecords();
         if ($token->payload()->isValid()) {

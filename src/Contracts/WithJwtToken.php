@@ -50,9 +50,9 @@ interface WithJwtToken
      *
      * @param JWTManager $jwt
      *
-     * @return self
+     * @return static
      */
-    public function withJwtToken(JWTManager $jwt): self;
+    public function withJwtToken(JWTManager $jwt): static;
 
     /**
      * Generate payload.

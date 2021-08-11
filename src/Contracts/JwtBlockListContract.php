@@ -1,6 +1,5 @@
 <?php
 
-
 namespace JWTAuth\Contracts;
 
 use JWTAuth\JWTManager;
@@ -12,9 +11,9 @@ interface JwtBlockListContract
      *
      * @param JWTManager $token
      *
-     * @return $this
+     * @return static
      */
-    public function add(JWTManager $token): self;
+    public function add(JWTManager $token): static;
 
     /**
      * Check is token in blocklist
