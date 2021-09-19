@@ -5,6 +5,7 @@ namespace JWTAuth\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
+use InvalidArgumentException;
 use JWTAuth\Contracts\HasObsoleteRecords;
 use JWTAuth\JWTGuard;
 
@@ -36,8 +37,13 @@ class PruneBlockListCommand extends Command
      */
     public function handle(): int
     {
+        $guardName = $this->argument('guard');
+        if (!is_string($guardName) && !is_null($guardName)) {
+            throw new InvalidArgumentException('Not valid "guard" parameter.');
+        }
+
         /** @var JWTGuard $guard */
-        $guard     = Auth::guard($this->argument('guard'));
+        $guard     = Auth::guard($guardName);
         $blockList = $guard->blockList();
 
         if ($blockList instanceof HasObsoleteRecords) {

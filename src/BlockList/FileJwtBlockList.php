@@ -18,7 +18,7 @@ class FileJwtBlockList implements JwtBlockListContract, HasObsoleteRecords
 {
 
     /**
-     * Filesystem disK name
+     * Filesystem disk name
      * @var string
      */
     protected string $disk;
