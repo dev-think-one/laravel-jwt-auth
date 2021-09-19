@@ -57,27 +57,32 @@ class GenerateJWTKeysCommand extends Command
         $privateKeyPath = storage_path("{$directory}/{$keyName}.key");
         $publicKeyPath  = storage_path("{$directory}/{$keyName}.key.pub");
 
-        if (File::exists($privateKeyPath) || File::exists($publicKeyPath)) {
-            if (File::exists($privateKeyPath)) {
-                $this->warn("File exists: {$privateKeyPath}");
-            }
-            if (File::exists($publicKeyPath)) {
-                $this->warn("File exists: {$publicKeyPath}");
-            }
-            if (!$this->option('force') && !$this->confirm('Keys already exists. Do you wish to continue?')) {
-                return 1;
-            }
-            File::delete($privateKeyPath);
-            File::delete($publicKeyPath);
+        if (!$this->newFilesCanBeStored($privateKeyPath, $publicKeyPath)) {
+            return 1;
         }
 
-        if (!File::isDirectory($dirFullPath)) {
-            File::makeDirectory($dirFullPath, 0755, true, true);
-        }
-        if (!File::exists("{$dirFullPath}/.gitignore")) {
-            File::put("{$dirFullPath}/.gitignore", "*\n!.gitignore");
+        $this->prepareDirectoryForFiles($dirFullPath);
+
+        if (!$this->createPrivateKeyFile($privateKeyPath)) {
+            return 2;
         }
 
+        if (!$this->createPublicKeyFile($privateKeyPath, $publicKeyPath)) {
+            return 3;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Create and store private key file.
+     *
+     * @param string $privateKeyPath
+     *
+     * @return bool
+     */
+    protected function createPrivateKeyFile(string $privateKeyPath): bool
+    {
         $process = new Process([
             'ssh-keygen',
             '-t',
@@ -98,9 +103,22 @@ class GenerateJWTKeysCommand extends Command
             $this->error($process->getErrorOutput());
             $this->error('Private key not created.');
 
-            return 2;
+            return false;
         }
 
+        return true;
+    }
+
+    /**
+     * Create and store public key file.
+     *
+     * @param string $privateKeyPath
+     * @param string $publicKeyPath
+     *
+     * @return bool
+     */
+    protected function createPublicKeyFile(string $privateKeyPath, string $publicKeyPath): bool
+    {
         $process = new Process([
             'openssl',
             'rsa',
@@ -118,9 +136,47 @@ class GenerateJWTKeysCommand extends Command
             $this->error($process->getErrorOutput());
             $this->error('Public key not converted.');
 
-            return 3;
+            return false;
         }
 
-        return 0;
+        return true;
+    }
+
+    /**
+     * @param string $dirFullPath
+     */
+    protected function prepareDirectoryForFiles(string $dirFullPath)
+    {
+        if (!File::isDirectory($dirFullPath)) {
+            File::makeDirectory($dirFullPath, 0755, true, true);
+        }
+        if (!File::exists("{$dirFullPath}/.gitignore")) {
+            File::put("{$dirFullPath}/.gitignore", "*\n!.gitignore");
+        }
+    }
+
+    /**
+     * @param string $privateKeyPath
+     * @param string $publicKeyPath
+     *
+     * @return bool
+     */
+    protected function newFilesCanBeStored(string $privateKeyPath, string $publicKeyPath): bool
+    {
+        if (File::exists($privateKeyPath) || File::exists($publicKeyPath)) {
+            if (File::exists($privateKeyPath)) {
+                $this->warn("File exists: {$privateKeyPath}");
+            }
+            if (File::exists($publicKeyPath)) {
+                $this->warn("File exists: {$publicKeyPath}");
+            }
+            if (!$this->option('force') && !$this->confirm('Keys already exists. Do you wish to continue?')) {
+                return false;
+            }
+            File::delete($privateKeyPath);
+            File::delete($publicKeyPath);
+        }
+
+        return true;
     }
 }
