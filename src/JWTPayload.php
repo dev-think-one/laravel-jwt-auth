@@ -121,7 +121,7 @@ class JWTPayload implements JWTPayloadContract
     /**
      * @inheritDoc
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return Arr::get($this->payload, $key, $default);
     }

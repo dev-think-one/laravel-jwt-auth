@@ -36,6 +36,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 
         Auth::extend('jwt', function ($app, $name, array $config) {
+            if (!$config['provider']) {
+                throw new JWTConfigurationException('Not valid "provider" value.');
+            }
+
             $blocklistProvider = $app['config']->get("jwt-auth.blocklist.providers.{$config['blocklist']}");
             if (!$blocklistProvider || empty($blocklistProvider['driver'])  || !class_exists($blocklistProvider['driver']) || !is_subclass_of($blocklistProvider['driver'], JwtBlockListContract::class)) {
                 throw new JWTConfigurationException('blocklist should implement JwtBlockList Interface');

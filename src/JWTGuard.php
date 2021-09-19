@@ -88,11 +88,11 @@ class JWTGuard implements Guard
                     $user = $this->provider->retrieveByCredentials([
                         $this->provider->createModel()->getJwtAuthIdentifierKey() => $identifier,
                     ]);
-                    if ($user) {
+                    if ($user && $user instanceof WithJwtToken) {
                         $user->withJwtToken($jwtToken);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // Token not valid
             }
         }
@@ -159,6 +159,10 @@ class JWTGuard implements Guard
             if (!$this->provider->validateCredentials($user, $credentials)) {
                 return false;
             }
+        }
+
+        if (!($user instanceof WithJwtToken)) {
+            throw new JWTAuthException('User should implement "WithJwtToken"');
         }
 
         try {

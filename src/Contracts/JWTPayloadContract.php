@@ -77,9 +77,9 @@ interface JWTPayloadContract extends \JsonSerializable
      * Get key from payload
      *
      * @param string $key
-     * @param null $default
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function get(string $key, $default = null);
+    public function get(string $key, mixed $default = null): mixed;
 }

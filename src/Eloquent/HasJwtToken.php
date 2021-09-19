@@ -20,9 +20,9 @@ trait HasJwtToken
     /**
      * Payload key name.
      *
-     * @return mixed
+     * @return string
      */
-    public function getJwtPayloadIdentifierKey()
+    public function getJwtPayloadIdentifierKey(): string
     {
         return $this->getJwtAuthIdentifierKey();
     }
@@ -30,20 +30,29 @@ trait HasJwtToken
     /**
      * Model token key name.
      *
-     * @return mixed
+     * @return string
      */
-    public function getJwtAuthIdentifierKey()
+    public function getJwtAuthIdentifierKey(): string
     {
-        return $this->getAuthIdentifierName();
+        if (method_exists($this, 'getAuthIdentifierName')) {
+            return $this->getAuthIdentifierName();
+        }
+
+        return 'id';
     }
 
     /**
      * Get stored JWT tokens for current model.
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @throws \Exception
      */
-    public function storedJwtTokens()
+    public function storedJwtTokens(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
+        if (!method_exists($this, 'morphMany')) {
+            throw new \Exception('Method "morphMany" should be provided.');
+        }
+
         return $this->morphMany(config('jwt-auth.models.tokens', StoredJwtToken::class), 'tokenable');
     }
 
@@ -99,7 +108,7 @@ trait HasJwtToken
             'abilities' => $abilities,
             'exp'       => Carbon::now()->addSeconds(config('jwt-auth.token.expiration', 3600 * 24))->timestamp,
         ]);
-        $payload = ( new JWTPayload([
+        $payload     = ( new JWTPayload([
             $this->getJwtPayloadIdentifierKey() => $this->{$this->getJwtAuthIdentifierKey()},
             'exp'                               => $storedToken->exp,
             'jti'                               => $storedToken->jti,
