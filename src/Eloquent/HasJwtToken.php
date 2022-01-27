@@ -95,10 +95,11 @@ trait HasJwtToken
     /**
      * Generate payload.
      *
-     * @param string $name
-     * @param array|string[] $abilities
+     * @param  string  $name
+     * @param  array|string[]  $abilities
      *
      * @return JWTPayload
+     * @throws \Exception
      */
     public function createPayload(string $name, array $abilities = [ '*' ]): JWTPayload
     {
@@ -106,7 +107,7 @@ trait HasJwtToken
             'name'      => $name,
             'jti'       => hash(config('jwt-auth.token.jti.hash_algo', 'sha256'), Str::random(40)),
             'abilities' => $abilities,
-            'exp'       => Carbon::now()->addSeconds(config('jwt-auth.token.expiration', 3600 * 24))->timestamp,
+            'exp'       => Carbon::now()->addSeconds($this->jwtTokenLifetimeInSeconds())->timestamp,
         ]);
         $payload     = ( new JWTPayload([
             $this->getJwtPayloadIdentifierKey() => $this->{$this->getJwtAuthIdentifierKey()},
@@ -121,5 +122,10 @@ trait HasJwtToken
         }
 
         return $payload;
+    }
+
+    public function jwtTokenLifetimeInSeconds():int
+    {
+        return (int) config('jwt-auth.token.expiration', 3600 * 24);
     }
 }
