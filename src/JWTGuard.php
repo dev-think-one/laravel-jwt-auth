@@ -166,8 +166,7 @@ class JWTGuard implements Guard
         }
 
         try {
-            $token = $this->jwt->setPayload($user->createPayload('jwt'));
-            $user->withJwtToken($token);
+            $token = $this->createTokenForUser($user, 'jwt');
             $this->setUser($user);
 
             return $token->encode();
@@ -175,7 +174,6 @@ class JWTGuard implements Guard
             throw new JWTAuthException('Token creation error', 500, $e);
         }
     }
-
 
     public function logout()
     {
@@ -193,25 +191,23 @@ class JWTGuard implements Guard
         $this->unsetUser();
     }
 
-    /**
-     * Remove user form guard cache.
-     *
-     * @return $this
-     */
-    public function unsetUser(): JWTGuard
+    public function unsetUser(): static
     {
         $this->user = null;
 
         return $this;
     }
 
-    /**
-     * JWT Token Manager.
-     *
-     * @return JWTManager
-     */
     public function getJWTManager(): JWTManager
     {
         return $this->jwt;
+    }
+
+    public function createTokenForUser(WithJwtToken $user, string $name, array $abilities = [ '*' ]): Contracts\JWTManagerContract
+    {
+        $token = $this->jwt->setPayload($user->createPayload($name, $abilities));
+        $user->withJwtToken($token);
+
+        return $token;
     }
 }
