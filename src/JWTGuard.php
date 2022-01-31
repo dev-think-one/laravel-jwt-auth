@@ -166,7 +166,7 @@ class JWTGuard implements Guard
         }
 
         try {
-            $token = $this->createTokenForUser($user, 'jwt');
+            $token = $this->createTokenForUser($user);
             $this->setUser($user);
 
             return $token->encode();
@@ -203,7 +203,7 @@ class JWTGuard implements Guard
         return $this->jwt;
     }
 
-    public function createTokenForUser(WithJwtToken $user, string $name, array $abilities = [ '*' ]): Contracts\JWTManagerContract
+    public function createTokenForUser(WithJwtToken $user, string $name = 'jwt', array $abilities = [ '*' ]): Contracts\JWTManagerContract
     {
         $token = $this->jwt->setPayload($user->createPayload($name, $abilities));
         $user->withJwtToken($token);
