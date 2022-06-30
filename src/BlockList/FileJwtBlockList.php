@@ -131,7 +131,7 @@ class FileJwtBlockList implements JwtBlockListContract, HasObsoleteRecords
             ->each(function ($file) {
                 if (
                     $file['type'] == 'file' &&
-                    $file['timestamp'] < Carbon::now()->subMinutes($this->minutesToObsolescence())->getTimestamp()
+                    $file['lastModified'] < Carbon::now()->subMinutes($this->minutesToObsolescence())->getTimestamp()
                 ) {
                     Storage::disk($this->disk)->delete($file['path']);
                 }
