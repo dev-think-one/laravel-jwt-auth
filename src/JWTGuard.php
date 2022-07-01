@@ -216,9 +216,9 @@ class JWTGuard implements Guard
         return null;
     }
 
-    public function createTokenForUser(WithJwtToken $user, string $name = 'jwt', array $abilities = ['*']): Contracts\JWTManagerContract
+    public function createTokenForUser(WithJwtToken $user, string $name = 'jwt', array $abilities = ['*'], ?int $lifetimeInSeconds = null): Contracts\JWTManagerContract
     {
-        $token = $this->jwt->setPayload($user->createPayload($name, $abilities));
+        $token = $this->jwt->setPayload($user->createPayload($name, $abilities, $lifetimeInSeconds));
         $user->withJwtToken($token);
 
         return $token;
