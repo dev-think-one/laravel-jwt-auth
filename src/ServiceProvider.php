@@ -47,9 +47,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
             return new JWTGuard(
                 Auth::createUserProvider($config['provider']),
-                new JWTManager(($config['public_key'] ?? ''), ($config['private_key'] ?? '')),
+                new JWTManager(($config['public_key']                         ?? ''), ($config['private_key']                         ?? '')),
                 new $blocklistProvider['driver']($blocklistProvider['options']??[]),
-                $config['options'] ?? []
+                $config['options']                                            ?? []
             );
         });
     }

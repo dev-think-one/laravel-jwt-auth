@@ -93,21 +93,15 @@ trait HasJwtToken
     }
 
     /**
-     * Generate payload.
-     *
-     * @param  string  $name
-     * @param  array|string[]  $abilities
-     *
-     * @return JWTPayload
-     * @throws \Exception
+     * @inheritDoc
      */
-    public function createPayload(string $name, array $abilities = [ '*' ]): JWTPayload
+    public function createPayload(string $name, array $abilities = [ '*' ], ?int $lifetimeInSeconds = null): JWTPayload
     {
         $storedToken = $this->storedJwtTokens()->create([
             'name'      => $name,
             'jti'       => hash(config('jwt-auth.token.jti.hash_algo', 'sha256'), Str::random(40)),
             'abilities' => $abilities,
-            'exp'       => Carbon::now()->addSeconds($this->jwtTokenLifetimeInSeconds())->timestamp,
+            'exp'       => Carbon::now()->addSeconds($lifetimeInSeconds ?: $this->jwtTokenLifetimeInSeconds())->timestamp,
         ]);
         $payload     = ( new JWTPayload([
             $this->getJwtPayloadIdentifierKey() => $this->{$this->getJwtAuthIdentifierKey()},

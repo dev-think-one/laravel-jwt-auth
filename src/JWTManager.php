@@ -3,6 +3,7 @@
 namespace JWTAuth;
 
 use \Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use JWTAuth\Contracts\JWTManagerContract;
 use JWTAuth\Contracts\JWTPayloadContract;
 use JWTAuth\Exceptions\JWTAuthException;
@@ -58,7 +59,7 @@ class JWTManager implements JWTManagerContract
     {
         $publicKey = file_get_contents(storage_path($this->publicKey));
 
-        $payloadArray = (array) JWT::decode($token, $publicKey, [ 'RS256' ]);
+        $payloadArray = (array) JWT::decode($token, new Key($publicKey, 'RS256'));
 
         $this->payload = new JWTPayload($payloadArray);
 
@@ -74,7 +75,7 @@ class JWTManager implements JWTManagerContract
     {
         $privateKey = file_get_contents(storage_path($this->privateKey));
 
-        $this->token = JWT::encode($this->payload, $privateKey, 'RS256');
+        $this->token = JWT::encode($this->payload->toArray(), $privateKey, 'RS256');
 
         return $this->token;
     }

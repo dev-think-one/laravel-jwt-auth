@@ -49,7 +49,7 @@ class FileJwtBlockList implements JwtBlockListContract, HasObsoleteRecords
         $this->directory = rtrim($configs['directory'] ?? '', '/');
         throw_if(empty($this->directory), JWTConfigurationException::class, 'FileJwtBlockList: Directory is empty');
 
-        $this->minutesToObsolescence = (int) ($configs['minutes_to_obsolescence'] ?? 0);
+        $this->minutesToObsolescence = (int) ($configs['minutes_to_obsolescence']         ?? 0);
         $this->periodRemoveObsolete  = (int) ($configs['remove_obsoleted_each_x_seconds'] ?? 0);
     }
 

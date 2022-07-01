@@ -57,10 +57,10 @@ interface WithJwtToken
     /**
      * Generate payload.
      *
-     * @param string $name
-     * @param array|string[] $abilities
-     *
+     * @param  string  $name
+     * @param  array|string[]  $abilities
+     * @param  int|null  $lifetimeInSeconds
      * @return JWTPayload
      */
-    public function createPayload(string $name, array $abilities = [ '*' ]): JWTPayload;
+    public function createPayload(string $name, array $abilities = [ '*' ], ?int $lifetimeInSeconds = null): JWTPayload;
 }

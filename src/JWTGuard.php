@@ -8,6 +8,7 @@ use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Support\Facades\Log;
 use JWTAuth\Contracts\JwtBlockListContract;
 use JWTAuth\Contracts\WithJwtToken;
 use JWTAuth\Exceptions\JWTAuthException;
@@ -74,26 +75,18 @@ class JWTGuard implements Guard
 
         $user = null;
 
-        $token = $this->getTokenForRequest();
+        $jwtToken = $this->decodeToken($this->getTokenForRequest());
 
-        if (!empty($token)) {
-            try {
-                $jwtToken = $this->jwt->decode($token);
-                if (
-                    !$this->blockList->isBlockListed($jwtToken) &&
-                    $jwtToken->payload()->isValid() &&
-                    $identifier = $jwtToken->payload()->get($this->provider->createModel()->getJwtPayloadIdentifierKey(), false)
-                ) {
-                    /** @var WithJwtToken $user */
-                    $user = $this->provider->retrieveByCredentials([
-                        $this->provider->createModel()->getJwtAuthIdentifierKey() => $identifier,
-                    ]);
-                    if ($user && $user instanceof WithJwtToken) {
-                        $user->withJwtToken($jwtToken);
-                    }
-                }
-            } catch (\Exception) {
-                // Token not valid
+        if (
+            $jwtToken &&
+            $identifier = $jwtToken->payload()->get($this->provider->createModel()->getJwtPayloadIdentifierKey(), false)
+        ) {
+            /** @var WithJwtToken $user */
+            $user = $this->provider->retrieveByCredentials([
+                $this->provider->createModel()->getJwtAuthIdentifierKey() => $identifier,
+            ]);
+            if ($user && $user instanceof WithJwtToken) {
+                $user->withJwtToken($jwtToken);
             }
         }
 
@@ -142,7 +135,7 @@ class JWTGuard implements Guard
     /**
      * Attempt to authenticate the user and return the token.
      *
-     * @param array $credentials
+     * @param  array  $credentials
      *
      * @return false|string
      * @throws JWTAuthException
@@ -203,7 +196,27 @@ class JWTGuard implements Guard
         return $this->jwt;
     }
 
-    public function createTokenForUser(WithJwtToken $user, string $name = 'jwt', array $abilities = [ '*' ]): Contracts\JWTManagerContract
+    public function decodeToken(?string $token): ?Contracts\JWTManagerContract
+    {
+        if ($token) {
+            try {
+                $jwtToken = $this->jwt->decode($token);
+                if (
+                    !$this->blockList->isBlockListed($jwtToken) &&
+                    $jwtToken->payload()->isValid()
+                ) {
+                    return $jwtToken;
+                }
+            } catch (\Exception $e) {
+                // Token not valid
+                Log::info($e->getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    public function createTokenForUser(WithJwtToken $user, string $name = 'jwt', array $abilities = ['*']): Contracts\JWTManagerContract
     {
         $token = $this->jwt->setPayload($user->createPayload($name, $abilities));
         $user->withJwtToken($token);
