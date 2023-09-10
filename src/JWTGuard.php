@@ -170,7 +170,6 @@ class JWTGuard implements Guard
 
     public function logout()
     {
-
         /** @var WithJwtToken $user */
         $user = $this->user();
 

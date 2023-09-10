@@ -1,4 +1,5 @@
 # Another laravel jwt auth
+
 [![Packagist License](https://img.shields.io/packagist/l/yaroslawww/laravel-jwt-auth?color=%234dc71f)](https://github.com/yaroslawww/laravel-jwt-auth/blob/master/LICENSE.md)
 [![Packagist Version](https://img.shields.io/packagist/v/yaroslawww/laravel-jwt-auth)](https://packagist.org/packages/yaroslawww/laravel-jwt-auth)
 [![Build Status](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/build-status/master)

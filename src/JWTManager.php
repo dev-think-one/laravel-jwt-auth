@@ -6,7 +6,6 @@ use \Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use JWTAuth\Contracts\JWTManagerContract;
 use JWTAuth\Contracts\JWTPayloadContract;
-use JWTAuth\Exceptions\JWTAuthException;
 
 /**
  * Class JWTManager
@@ -83,15 +82,9 @@ class JWTManager implements JWTManagerContract
     /**
      * @inheritDoc
      */
-    public function setPayload($payload): JWTManagerContract
+    public function setPayload(array|JWTPayloadContract $payload): JWTManagerContract
     {
-        if (is_array($payload)) {
-            $this->payload = new JWTPayload($payload);
-        } elseif ($payload instanceof JWTPayloadContract) {
-            $this->payload = $payload;
-        } else {
-            throw new JWTAuthException('Payload should be array OR JWTPayloadContract instance');
-        }
+        $this->payload = is_array($payload) ? new JWTPayload($payload) : $payload;
 
         $this->token = '';
 
@@ -128,7 +121,7 @@ class JWTManager implements JWTManagerContract
         return json_encode($this->toArray(), $options);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

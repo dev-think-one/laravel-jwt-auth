@@ -113,7 +113,7 @@ class JWTPayload implements JWTPayloadContract
     /**
      * @inheritDoc
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

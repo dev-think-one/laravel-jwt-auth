@@ -31,7 +31,7 @@ interface JWTManagerContract
      * @return JWTManagerContract
      * @throws JWTAuthException
      */
-    public function setPayload($payload): JWTManagerContract;
+    public function setPayload(array|JWTPayloadContract $payload): JWTManagerContract;
 
     /**
      * Get payload data.

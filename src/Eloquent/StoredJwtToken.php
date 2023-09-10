@@ -29,7 +29,7 @@ class StoredJwtToken extends Model
     /**
      * @inheritDoc
      */
-    public function getTable()
+    public function getTable(): string
     {
         return config('jwt-auth.tables.tokens', parent::getTable());
     }
