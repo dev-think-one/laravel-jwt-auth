@@ -1,17 +1,17 @@
 {
-    "name": "yaroslawww/laravel-jwt-auth",
+    "name": "think.studio/laravel-jwt-auth",
     "description": "Another laravel jwt auth package.",
     "keywords": [
         "laravel",
         "jwt",
         "auth"
     ],
-    "homepage": "https://github.com/yaroslawww/laravel-jwt-auth",
+    "homepage": "https://github.com/dev-think-one/laravel-jwt-auth",
     "license": "MIT",
     "authors": [
         {
             "name": "Yaroslav Georgitsa",
-            "email": "yaroslav.georgitsa@gmail.com",
+            "email": "yg@think.studio",
             "homepage": "https://github.com/yaroslawww",
             "role": "Developer"
         }

@@ -1,10 +1,11 @@
 # Another laravel jwt auth
 
-[![Packagist License](https://img.shields.io/packagist/l/yaroslawww/laravel-jwt-auth?color=%234dc71f)](https://github.com/yaroslawww/laravel-jwt-auth/blob/master/LICENSE.md)
-[![Packagist Version](https://img.shields.io/packagist/v/yaroslawww/laravel-jwt-auth)](https://packagist.org/packages/yaroslawww/laravel-jwt-auth)
-[![Build Status](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/build-status/master)
-[![Code Coverage](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-jwt-auth/?branch=master)
+![Packagist License](https://img.shields.io/packagist/l/think.studio/laravel-jwt-auth?color=%234dc71f)
+[![Packagist Version](https://img.shields.io/packagist/v/think.studio/laravel-jwt-auth)](https://packagist.org/packages/think.studio/laravel-jwt-auth)
+[![Total Downloads](https://img.shields.io/packagist/dt/think.studio/laravel-jwt-auth)](https://packagist.org/packages/think.studio/laravel-jwt-auth)
+[![Build Status](https://scrutinizer-ci.com/g/dev-think-one/laravel-jwt-auth/badges/build.png?b=main)](https://scrutinizer-ci.com/g/dev-think-one/laravel-jwt-auth/build-status/main)
+[![Code Coverage](https://scrutinizer-ci.com/g/dev-think-one/laravel-jwt-auth/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/dev-think-one/laravel-jwt-auth/?branch=main)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dev-think-one/laravel-jwt-auth/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/dev-think-one/laravel-jwt-auth/?branch=main)
 
 Another laravel jwt auth package. \
 This package has very slow support, you might be better off switching to an older and more used
@@ -14,19 +15,19 @@ package: [tymon/jwt-auth](https://github.com/tymondesigns/jwt-auth)
 
 Install the package via composer:
 
-```bash
-composer require yaroslawww/laravel-jwt-auth
+```shell
+composer require think.studio/laravel-jwt-auth
 ```
 
 You can publish the config file with:
 
-```bash
+```shell
 php artisan vendor:publish --provider="JWTAuth\ServiceProvider" --tag="config"
 ```
 
 You can publish migrations:
 
-```bash
+```shell
 php artisan vendor:publish --provider="JWTAuth\ServiceProvider" --tag="migrations"
 ```
 
@@ -40,7 +41,7 @@ php artisan jwt:keys:generate
 
 Update auth configuration
 
-```injectablephp
+```php
 // config/auth.php
   'guards' => [
         // ...
@@ -57,7 +58,7 @@ Update auth configuration
 
 Update User model
 
-```injectablephp
+```php
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use JWTAuth\Contracts\WithJwtToken;
 
@@ -72,7 +73,7 @@ class User extends Authenticatable implements WithJwtToken
 
 Login
 
-```injectablephp
+```php
 /** @var \JWTAuth\JWTGuard $auth */
 $auth = Auth::guard('my_api_guard_name');
 $token = $auth->attempt($request->only( 'email', 'password'));
@@ -85,7 +86,7 @@ if ($token) {
 
 Logout
 
-```injectablephp
+```php
 if(Auth::guard('my_api_guard_name')->check()) {
     Auth::guard('my_api_guard_name')->logout();
 }
